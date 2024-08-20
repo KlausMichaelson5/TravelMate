@@ -1,0 +1,6 @@
+@TravelMate_HostAddress = http://localhost:5258
+
+GET {{TravelMate_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -7,9 +7,9 @@ namespace TravelMate.Services
 	public interface IUserService
 	{
 		Task Add(UserDto user);
-		Task Delete(int id);
+		Task<UserDto> Login(UserDto user);
+		Task<UserDto> Logout(UserDto user);
 		Task<UserDto> Get(int id);
-		Task<List<UserDto>> GetAll();
 		Task Update(UserDto user);
 	}
 
@@ -20,33 +20,6 @@ namespace TravelMate.Services
 		public UserService(TravelMateDbContext context)
 		{
 			_context = context;
-		}
-
-		public async Task<List<UserDto>> GetAll()
-		{
-			var users = new List<UserDto>();
-			var userEntities = await _context.Users.ToListAsync();
-
-			foreach (var userEntity in userEntities)
-			{
-				var user = new UserDto()
-				{
-					UserId = userEntity.UserId,
-					Username = userEntity.Username,
-					PasswordHash = userEntity.PasswordHash,
-					Name = userEntity.Name,
-					Address = userEntity.Address,
-					Nationality = userEntity.Nationality,
-					Email = userEntity.Email,
-					PhoneNumber = userEntity.PhoneNumber,
-					AuthProvider = userEntity.AuthProvider,
-					UserType = userEntity.UserType
-				};
-
-				users.Add(user);
-			}
-
-			return users;
 		}
 
 		public async Task<UserDto> Get(int id)
@@ -133,26 +106,31 @@ namespace TravelMate.Services
 			}
 		}
 
-		public async Task Delete(int id)
+		public async Task<UserDto> Login(UserDto userDto)
 		{
-			try
+			var user = await _context.Users
+				.Where(u => u.Username == userDto.Username)
+				.FirstOrDefaultAsync();
+
+			if (user == null )//|| !VerifyPassword(userDto.Password, user.PasswordHash))
 			{
-				var user = await _context.Users.FindAsync(id);
-				if (user != null)
-				{
-					_context.Users.Remove(user);
-					_context.SaveChanges();
-				}
-				else
-				{
-					throw new Exception("User not found to delete.");
-				}
+				throw new Exception("Invalid username or password.");
 			}
-			catch (Exception ex)
+
+			return new UserDto
 			{
-				throw ex;
-			}
+				UserId = user.UserId,
+				Username = user.Username,
+				Name = user.Name,
+				Email = user.Email,
+				PhoneNumber = user.PhoneNumber,
+				UserType = user.UserType
+			};
 		}
 
+		public Task<UserDto> Logout(UserDto user)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

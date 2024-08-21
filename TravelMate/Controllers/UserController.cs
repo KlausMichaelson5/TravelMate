@@ -19,20 +19,7 @@ namespace TravelMate.Controllers
 			_service = userService;
 		}
 
-		[HttpGet("AllUsers")]
-		public async Task<ActionResult<List<UserDto>>> GetAll()
-		{
-			var users = new List<UserDto>();
-			try
-			{
-				users = await _service.GetAll();
-			}
-			catch (Exception ex)
-			{
-				return NotFound(ex.Message);
-			}
-			return Ok(users);
-		}
+		
 
 		[HttpGet("{id}")]
 		public async Task<ActionResult<UserDto>> Get(int id)
@@ -76,19 +63,7 @@ namespace TravelMate.Controllers
 			}
 		}
 
-		[HttpDelete("{id}")]
-		public async Task<IActionResult> Delete(int id)
-		{
-			try
-			{
-				await _service.Delete(id);
-				return Ok();
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-		}
+		
 
 	}
 }

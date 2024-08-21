@@ -1,29 +1,31 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TravelMate.DTO;
 using TravelMate.Services;
 
 namespace TravelMate.Controllers
 {
-	[Route("api/hotels")]
+	[Route("api/rooms")]
 	[ApiController]
 	[EnableCors("cors")]
-	public class HotelController : ControllerBase
+	public class RoomController : ControllerBase
 	{
-		private readonly IHotelService _service;
+		private readonly IRoomService _service;
 
-		public HotelController(IHotelService service)
+		public RoomController(IRoomService roomService)
 		{
-			_service = service;
+			_service = roomService;
 		}
 
-		[HttpGet("AllHotels")]
-		public async Task<ActionResult<List<HotelDto>>> GetAll()
+		[HttpGet("AllRooms")]
+		public async Task<ActionResult<List<RoomDto>>> GetAll()
 		{
 			try
 			{
-				var hotels = await _service.GetAll();
-				return Ok(hotels);
+				var rooms = await _service.GetAll();
+				return Ok(rooms);
 			}
 			catch (Exception ex)
 			{
@@ -32,12 +34,12 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpGet("{id}")]
-		public async Task<ActionResult<HotelDto>> Get(int id)
+		public async Task<ActionResult<RoomDto>> Get(int id)
 		{
 			try
 			{
-				var hotel = await _service.Get(id);
-				return Ok(hotel);
+				var room = await _service.Get(id);
+				return Ok(room);
 			}
 			catch (Exception ex)
 			{
@@ -46,11 +48,11 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Post([FromBody] HotelDto hotel)
+		public async Task<IActionResult> Post([FromBody] RoomDto room)
 		{
 			try
 			{
-				await _service.Add(hotel);
+				await _service.Add(room);
 				return Ok();
 			}
 			catch (Exception ex)
@@ -60,11 +62,11 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Put(int id, [FromBody] HotelDto hotel)
+		public async Task<IActionResult> Put(int id, [FromBody] RoomDto room)
 		{
 			try
 			{
-				await _service.Update(hotel);
+				await _service.Update(id, room);
 				return Ok();
 			}
 			catch (Exception ex)

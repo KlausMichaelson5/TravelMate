@@ -22,12 +22,7 @@ namespace TravelMate
 				});
 			});
 
-			builder.Services.AddTransient<IUserService, UserService>();
-
-			builder.Services.AddDbContext<TravelMateDbContext>(options =>
-			{
-				options.UseSqlServer(builder.Configuration.GetConnectionString("myConnection"));
-			});
+			RegisterServices.RegisterService(builder);	
 
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

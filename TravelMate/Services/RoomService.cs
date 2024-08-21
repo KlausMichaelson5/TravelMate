@@ -5,11 +5,11 @@ namespace TravelMate.Services
 {
 	public interface IRoomService
 	{
-		Task Add(RoomDto room);
-		Task Delete(int id);
-		Task<RoomDto> Get(int id);
-		Task<List<RoomDto>> GetAll();
-		Task Update(int id,RoomDto room);
+		Task Add(RoomDto room,int hotelId);
+		Task Delete(int id,int hotelId);
+		Task<RoomDto> Get(int id,int hotelId);
+		Task<List<RoomDto>> GetAll(int hotelId);
+		Task Update(RoomDto room, int hotelId);
 	}
 	public class RoomService : IRoomService
 	{

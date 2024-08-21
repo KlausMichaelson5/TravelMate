@@ -7,7 +7,7 @@ namespace TravelMate.Services
 	public interface IUserService
 	{
 		Task Register(UserDto user);
-		Task<UserDto> Login(UserDto user);
+		Task<UserDto> Login(string username,string password);
 		Task<UserDto> Logout(UserDto user);
 		Task Update(UserDto user);
 	}
@@ -105,13 +105,13 @@ namespace TravelMate.Services
 			}
 		}
 
-		public async Task<UserDto> Login(UserDto userDto)
+		public async Task<UserDto> Login(string username,string password)
 		{
 			var user = await _context.Users
-				.Where(u => u.Username == userDto.Username)
+				.Where(u => u.Username == username)
 				.FirstOrDefaultAsync();
 
-			if (user == null || userDto.PasswordHash!= user.PasswordHash)
+			if (user == null || password!= user.PasswordHash)
 			{
 				throw new Exception("Invalid username or password.");
 			}

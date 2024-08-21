@@ -22,29 +22,31 @@ namespace TravelMate.Controllers
 		[HttpGet("AllCabs")]
 		public async Task<ActionResult<List<CabDto>>> GetAll()
 		{
-			try
-			{
-				var cabs = await _service.GetAll();
-				return Ok(cabs);
-			}
-			catch (Exception ex)
-			{
-				return NotFound(ex.Message);
-			}
+			//try
+			//{
+			//	//var cabs = await _service.GetAll();
+			//	return Ok(cabs);
+			//}
+			//catch (Exception ex)
+			//{
+			//	return NotFound(ex.Message);
+			//}
+			throw new NotImplementedException();
 		}
 
 		[HttpGet("{id}")]
 		public async Task<ActionResult<CabDto>> Get(int id)
 		{
-			try
-			{
-				var cab = await _service.Get(id);
-				return Ok(cab);
-			}
-			catch (Exception ex)
-			{
-				return NotFound(ex.Message);
-			}
+			//try
+			//{
+			//	var cab = await _service.Get(id);
+			//	return Ok(cab);
+			//}
+			//catch (Exception ex)
+			//{
+			//	return NotFound(ex.Message);
+			//}
+			throw new NotImplementedException();
 		}
 
 		[HttpPost]

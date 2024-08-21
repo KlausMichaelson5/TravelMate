@@ -19,12 +19,12 @@ namespace TravelMate.Controllers
 			_service = userService;
 		}
 
-		[HttpGet("{id}")]
-		public async Task<ActionResult<UserDto>> Login(UserDto LoginUser)
+		[HttpGet]
+		public async Task<ActionResult<UserDto>> Login(string username, string password)
 		{
 			try
 			{
-				var user = await _service.Login(LoginUser);
+				var user = await _service.Login(username,password);
 				return user;
 			}
 			catch (Exception ex)

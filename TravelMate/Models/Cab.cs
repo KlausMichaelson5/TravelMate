@@ -21,7 +21,7 @@ namespace TravelMate.Models
 		[Required]
 		public string VehicleName { get; set; }=string.Empty;
 
-		public string RegistrationNumber { get; set; } = string.Empty;
+		public string RegistrationNumber { get; set; } = string.Empty;//name:VehicleRegistrationNumber
 
 		public string LicenseNumber { get; set; } = string.Empty;
 

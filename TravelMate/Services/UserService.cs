@@ -6,10 +6,9 @@ namespace TravelMate.Services
 {
 	public interface IUserService
 	{
-		Task Add(UserDto user);
+		Task Register(UserDto user);
 		Task<UserDto> Login(UserDto user);
 		Task<UserDto> Logout(UserDto user);
-		Task<UserDto> Get(int id);
 		Task Update(UserDto user);
 	}
 
@@ -22,34 +21,34 @@ namespace TravelMate.Services
 			_context = context;
 		}
 
-		public async Task<UserDto> Get(int id)
-		{
-			try
-			{
-				var user = await _context.Users.FindAsync(id);
-				if (user == null)
-				{
-					throw new Exception($"User with id {id} not found.");
-				}
-				return new UserDto()
-				{
-					UserId = user.UserId,
-					Username = user.Username,
-					PasswordHash = user.PasswordHash,
-					Name = user.Name,
-					Address = user.Address,
-					Nationality = user.Nationality,
-					Email = user.Email,
-					PhoneNumber = user.PhoneNumber,
-					AuthProvider = user.AuthProvider,
-					UserType = user.UserType
-				};
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-		}
+		//public async Task<UserDto> Get(int id)
+		//{
+		//	try
+		//	{
+		//		var user = await _context.Users.FindAsync(id);
+		//		if (user == null)
+		//		{
+		//			throw new Exception($"User with id {id} not found.");
+		//		}
+		//		return new UserDto()
+		//		{
+		//			UserId = user.UserId,
+		//			Username = user.Username,
+		//			PasswordHash = user.PasswordHash,
+		//			Name = user.Name,
+		//			Address = user.Address,
+		//			Nationality = user.Nationality,
+		//			Email = user.Email,
+		//			PhoneNumber = user.PhoneNumber,
+		//			AuthProvider = user.AuthProvider,
+		//			UserType = user.UserType
+		//		};
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		throw ex;
+		//	}
+		//}
 
 		public async Task Update(UserDto user)
 		{
@@ -81,7 +80,7 @@ namespace TravelMate.Services
 			}
 		}
 
-		public async Task Add(UserDto user)
+		public async Task Register(UserDto user)
 		{
 			try
 			{
@@ -112,7 +111,7 @@ namespace TravelMate.Services
 				.Where(u => u.Username == userDto.Username)
 				.FirstOrDefaultAsync();
 
-			if (user == null )//|| !VerifyPassword(userDto.Password, user.PasswordHash))
+			if (user == null || userDto.PasswordHash!= user.PasswordHash)
 			{
 				throw new Exception("Invalid username or password.");
 			}

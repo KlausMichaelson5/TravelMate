@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TravelMate.DTO;
 using TravelMate.Models;
 
@@ -16,16 +17,27 @@ namespace TravelMate.Services
 	public class HotelService : IHotelService
 	{
 		private readonly TravelMateDbContext _context;
+		private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public HotelService(TravelMateDbContext context)
+		public HotelService(TravelMateDbContext context, IHttpContextAccessor httpContextAccessor)
 		{
 			_context = context;
+			_httpContextAccessor = httpContextAccessor;
+		}
+
+		private int GetCurrentUserId()
+		{
+			var userId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+			return int.Parse(userId);
 		}
 
 		public async Task<List<HotelDto>> GetAll()
 		{
+			var currentUserId = GetCurrentUserId();
 			var hotels = new List<HotelDto>();
-			var hotelEntities = await _context.Hotels.ToListAsync();
+			var hotelEntities = await _context.Hotels
+				.Where(h => h.HotelOwnerId == currentUserId)
+				.ToListAsync();
 
 			foreach (var hotelEntity in hotelEntities)
 			{
@@ -55,11 +67,14 @@ namespace TravelMate.Services
 
 		public async Task<HotelDto> Get(int id)
 		{
+			var currentUserId = GetCurrentUserId();
 			var hotelEntity = await _context.Hotels.FindAsync(id);
-			if (hotelEntity == null)
+
+			if (hotelEntity == null || hotelEntity.HotelOwnerId != currentUserId)
 			{
-				throw new Exception($"Hotel with id {id} not found.");
+				throw new Exception($"Hotel with id {id} not found or you do not have access.");
 			}
+
 			return new HotelDto
 			{
 				HotelId = hotelEntity.HotelId,
@@ -81,35 +96,37 @@ namespace TravelMate.Services
 
 		public async Task Update(HotelDto hotel)
 		{
+			var currentUserId = GetCurrentUserId();
 			var existingHotel = await _context.Hotels.FindAsync(hotel.HotelId);
-			if (existingHotel != null)
-			{
-				existingHotel.Name = hotel.Name;
-				existingHotel.Address = hotel.Address;
-				existingHotel.City = hotel.City;
-				existingHotel.State = hotel.State;
-				existingHotel.Country = hotel.Country;
-				existingHotel.ZipCode = hotel.ZipCode;
-				existingHotel.Description = hotel.Description;
-				existingHotel.Latitude = hotel.Latitude;
-				existingHotel.Longitude = hotel.Longitude;
-				existingHotel.Rating = hotel.Rating;
-				existingHotel.AvailabilityStatus = hotel.AvailabilityStatus;
-				existingHotel.HotelImage = hotel.HotelImage;
 
-				await _context.SaveChangesAsync();
-			}
-			else
+			if (existingHotel == null || existingHotel.HotelOwnerId != currentUserId)
 			{
-				throw new Exception("Hotel not found to update.");
+				throw new Exception("Hotel not found or you do not have access to update.");
 			}
+
+			existingHotel.Name = hotel.Name;
+			existingHotel.Address = hotel.Address;
+			existingHotel.City = hotel.City;
+			existingHotel.State = hotel.State;
+			existingHotel.Country = hotel.Country;
+			existingHotel.ZipCode = hotel.ZipCode;
+			existingHotel.Description = hotel.Description;
+			existingHotel.Latitude = hotel.Latitude;
+			existingHotel.Longitude = hotel.Longitude;
+			existingHotel.Rating = hotel.Rating;
+			existingHotel.AvailabilityStatus = hotel.AvailabilityStatus;
+			existingHotel.HotelImage = hotel.HotelImage;
+
+			await _context.SaveChangesAsync();
 		}
 
 		public async Task Add(HotelDto hotel)
 		{
+			var currentUserId = GetCurrentUserId();
+
 			await _context.Hotels.AddAsync(new Hotel
 			{
-				HotelOwnerId = hotel.HotelOwnerId,
+				HotelOwnerId = currentUserId, // Use the current user's ID as the owner
 				Name = hotel.Name,
 				Address = hotel.Address,
 				City = hotel.City,
@@ -129,16 +146,16 @@ namespace TravelMate.Services
 
 		public async Task Delete(int id)
 		{
+			var currentUserId = GetCurrentUserId();
 			var hotel = await _context.Hotels.FindAsync(id);
-			if (hotel != null)
+
+			if (hotel == null || hotel.HotelOwnerId != currentUserId)
 			{
-				_context.Hotels.Remove(hotel);
-				await _context.SaveChangesAsync();
+				throw new Exception("Hotel not found or you do not have access to delete.");
 			}
-			else
-			{
-				throw new Exception("Hotel not found to delete.");
-			}
+
+			_context.Hotels.Remove(hotel);
+			await _context.SaveChangesAsync();
 		}
 	}
 }

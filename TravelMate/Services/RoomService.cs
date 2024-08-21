@@ -1,6 +1,4 @@
-﻿using global::TravelMate.DTO;
-using global::TravelMate.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TravelMate.DTO;
 using TravelMate.Models;
 namespace TravelMate.Services
@@ -22,9 +20,10 @@ namespace TravelMate.Services
 			_context = context;
 		}
 
-		public async Task<List<RoomDto>> GetAll()
+		public async Task<List<RoomDto>> GetAll(int hotelId)
 		{
 			var rooms = await _context.Rooms
+				.Where(room=>room.HotelId== hotelId)
 				.Select(room => new RoomDto
 				{
 					RoomId = room.RoomId,
@@ -39,10 +38,10 @@ namespace TravelMate.Services
 			return rooms;
 		}
 
-		public async Task<RoomDto> Get(int id)
+		public async Task<RoomDto> Get(int id, int hotelId)
 		{
 			var room = await _context.Rooms
-				.Where(r => r.RoomId == id)
+				.Where(r => r.RoomId == id && r.HotelId==hotelId)
 				.Select(room => new RoomDto
 				{
 					RoomId = room.RoomId,
@@ -62,11 +61,11 @@ namespace TravelMate.Services
 			return room;
 		}
 
-		public async Task Add(RoomDto roomDto)
+		public async Task Add(RoomDto roomDto, int hotelId)
 		{
 			var room = new Room
 			{
-				HotelId = roomDto.HotelId,
+				HotelId = hotelId,   //should add a check for matching hotelids
 				RoomType = roomDto.RoomType,
 				Price = roomDto.Price,
 				AvailabilityStatus = roomDto.AvailabilityStatus,
@@ -77,11 +76,11 @@ namespace TravelMate.Services
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task Update(int id, RoomDto roomDto)
+		public async Task Update(RoomDto roomDto, int hotelId)
 		{
-			var existingRoom = await _context.Rooms.FindAsync(id);
+			var existingRoom = await _context.Rooms.FindAsync(roomDto.RoomId);
 
-			if (existingRoom == null)
+			if (existingRoom == null || existingRoom.HotelId!=hotelId)
 			{
 				throw new Exception("Room not found to update.");
 			}
@@ -95,11 +94,11 @@ namespace TravelMate.Services
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task Delete(int id)
+		public async Task Delete(int id, int hotelId)
 		{
 			var room = await _context.Rooms.FindAsync(id);
 
-			if (room == null)
+			if (room == null || room.HotelId!=hotelId)
 			{
 				throw new Exception("Room not found to delete.");
 			}

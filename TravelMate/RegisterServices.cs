@@ -11,6 +11,8 @@ namespace TravelMate
 			builder.Services.AddTransient<ICabService, CabService>();
 			builder.Services.AddTransient<IHotelService, HotelService>();
 			builder.Services.AddTransient<IRoomService, RoomService>();
+			builder.Services.AddTransient<IAdminService, AdminService>();
+			builder.Services.AddHttpContextAccessor();
 
 			builder.Services.AddDbContext<TravelMateDbContext>(options =>
 			{

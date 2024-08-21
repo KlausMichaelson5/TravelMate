@@ -4,9 +4,10 @@ namespace TravelMate.Models
 {
 	public enum UserType
 	{
-		Regular,
+		User,
 		Hotel_Owner,
-		Driver_Client
+		Driver_Client,
+		Admin
 	}
 	public enum AuthProvider
 	{

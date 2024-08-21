@@ -39,7 +39,7 @@ namespace TravelMate
 			}
 			app.UseCors("cors");
 			app.UseAuthorization();
-
+			app.UseAuthentication();
 
 			app.MapControllers();
 

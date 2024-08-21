@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TravelMate.DTO;
 using TravelMate.Models;
 
@@ -8,59 +9,38 @@ namespace TravelMate.Services
 	{
 		Task Add(CabDto cab);
 		Task Delete(int id);
-		Task<CabDto> Get(int id);
-		Task<List<CabDto>> GetAll();
+		Task<CabDto> Get();
 		Task Update(CabDto cab);
 	}
+
 	public class CabService : ICabService
 	{
 		private readonly TravelMateDbContext _context;
+		private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public CabService(TravelMateDbContext context)
+		public CabService(TravelMateDbContext context, IHttpContextAccessor httpContextAccessor)
 		{
 			_context = context;
+			_httpContextAccessor = httpContextAccessor;
 		}
 
-		public async Task<List<CabDto>> GetAll()
+		private int GetCurrentUserId()
 		{
-			var cabs = new List<CabDto>();
-			var cabEntities = await _context.Cabs.ToListAsync();
-
-			foreach (var cabEntity in cabEntities)
-			{
-				var cab = new CabDto()
-				{
-					CabId = cabEntity.CabId,
-					DriverId = cabEntity.DriverId,
-					VehicleName = cabEntity.VehicleName,
-					RegistrationNumber = cabEntity.RegistrationNumber,
-					LicenseNumber = cabEntity.LicenseNumber,
-					CabPhoto = cabEntity.CabPhoto,
-					DriverPhoto = cabEntity.DriverPhoto,
-					Latitude = cabEntity.Latitude,
-					Longitude = cabEntity.Longitude,
-					AvailabilityStatus = cabEntity.AvailabilityStatus,
-					VehicleType = cabEntity.VehicleType,
-					NumberOfSeats = cabEntity.NumberOfSeats,
-					PricePerKm = cabEntity.PricePerKm,
-					Rating = cabEntity.Rating
-				};
-
-				cabs.Add(cab);
-			}
-
-			return cabs;
+			var userId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+			return int.Parse(userId);
 		}
 
-		public async Task<CabDto> Get(int id)
+		public async Task<CabDto> Get()
 		{
-			var cabEntity = await _context.Cabs.FindAsync(id);
+			var currentUserId = GetCurrentUserId();
+			var cabEntity = await _context.Cabs.FirstOrDefaultAsync(c => c.DriverId == currentUserId);
+
 			if (cabEntity == null)
 			{
-				throw new Exception($"Cab with id {id} not found.");
+				throw new Exception("No cab found for the current user.");
 			}
 
-			return new CabDto()
+			return new CabDto
 			{
 				CabId = cabEntity.CabId,
 				DriverId = cabEntity.DriverId,
@@ -81,9 +61,11 @@ namespace TravelMate.Services
 
 		public async Task Add(CabDto cab)
 		{
-			var cabEntity = new Cab()
+			var currentUserId = GetCurrentUserId();
+
+			var cabEntity = new Cab
 			{
-				DriverId = cab.DriverId,
+				DriverId = currentUserId,
 				VehicleName = cab.VehicleName,
 				RegistrationNumber = cab.RegistrationNumber,
 				LicenseNumber = cab.LicenseNumber,
@@ -104,13 +86,14 @@ namespace TravelMate.Services
 
 		public async Task Update(CabDto cab)
 		{
+			var currentUserId = GetCurrentUserId();
 			var cabEntity = await _context.Cabs.FindAsync(cab.CabId);
-			if (cabEntity == null)
+
+			if (cabEntity == null || cabEntity.DriverId != currentUserId)
 			{
-				throw new Exception("Cab not found to update.");
+				throw new Exception("Cab not found or you do not have access to update.");
 			}
 
-			cabEntity.DriverId = cab.DriverId;
 			cabEntity.VehicleName = cab.VehicleName;
 			cabEntity.RegistrationNumber = cab.RegistrationNumber;
 			cabEntity.LicenseNumber = cab.LicenseNumber;
@@ -129,10 +112,12 @@ namespace TravelMate.Services
 
 		public async Task Delete(int id)
 		{
+			var currentUserId = GetCurrentUserId();
 			var cabEntity = await _context.Cabs.FindAsync(id);
-			if (cabEntity == null)
+
+			if (cabEntity == null || cabEntity.DriverId != currentUserId)
 			{
-				throw new Exception("Cab not found to delete.");
+				throw new Exception("Cab not found or you do not have access to delete.");
 			}
 
 			_context.Cabs.Remove(cabEntity);

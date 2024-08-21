@@ -19,42 +19,27 @@ namespace TravelMate.Controllers
 			_service = service;
 		}
 
-		[HttpGet("AllCabs")]
-		public async Task<ActionResult<List<CabDto>>> GetAll()
-		{
-			//try
-			//{
-			//	//var cabs = await _service.GetAll();
-			//	return Ok(cabs);
-			//}
-			//catch (Exception ex)
-			//{
-			//	return NotFound(ex.Message);
-			//}
-			throw new NotImplementedException();
-		}
 
 		[HttpGet("{id}")]
-		public async Task<ActionResult<CabDto>> Get(int id)
-		{
-			//try
-			//{
-			//	var cab = await _service.Get(id);
-			//	return Ok(cab);
-			//}
-			//catch (Exception ex)
-			//{
-			//	return NotFound(ex.Message);
-			//}
-			throw new NotImplementedException();
-		}
-
-		[HttpPost]
-		public async Task<IActionResult> Post([FromBody] CabDto cab)
+		public async Task<ActionResult<CabDto>> Get(int currentUserId)
 		{
 			try
 			{
-				await _service.Add(cab);
+				var cab = await _service.Get(currentUserId);
+				return Ok(cab);
+			}
+			catch (Exception ex)
+			{
+				return NotFound(ex.Message);
+			}
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Post([FromBody] CabDto cab, int currentUserId)
+		{
+			try
+			{
+				await _service.Add(cab,currentUserId);
 				return Ok();
 			}
 			catch (Exception ex)
@@ -64,11 +49,11 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Put(int id, [FromBody] CabDto cab)
+		public async Task<IActionResult> Put([FromBody] CabDto cab, int currentUserId)
 		{
 			try
 			{
-				await _service.Update(cab);
+				await _service.Update(cab,currentUserId);
 				return Ok();
 			}
 			catch (Exception ex)
@@ -78,11 +63,11 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(int id, int currentUserId)
 		{
 			try
 			{
-				await _service.Delete(id);
+				await _service.Delete(id,currentUserId);
 				return Ok();
 			}
 			catch (Exception ex)

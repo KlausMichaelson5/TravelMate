@@ -7,11 +7,11 @@ namespace TravelMate.Services
 {
 	public interface IHotelService
 	{
-		Task Add(HotelDto hotel);
-		Task Delete(int id);
-		Task<HotelDto> Get(int id);
-		Task<List<HotelDto>> GetAll();
-		Task Update(HotelDto hotel);
+		Task Add(HotelDto hotel,int currentUserId);
+		Task Delete(int id, int currentUserId);
+		Task<HotelDto> Get(int id, int currentUserId);
+		Task<List<HotelDto>> GetAll(int currentUserId);
+		Task Update(HotelDto hotel, int currentUserId);
 	}
 
 	public class HotelService : IHotelService
@@ -19,21 +19,13 @@ namespace TravelMate.Services
 		private readonly TravelMateDbContext _context;
 		private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public HotelService(TravelMateDbContext context, IHttpContextAccessor httpContextAccessor)
+		public HotelService(TravelMateDbContext context)
 		{
 			_context = context;
-			_httpContextAccessor = httpContextAccessor;
 		}
 
-		private int GetCurrentUserId()
+		public async Task<List<HotelDto>> GetAll(int currentUserId)
 		{
-			var userId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-			return int.Parse(userId);
-		}
-
-		public async Task<List<HotelDto>> GetAll()
-		{
-			var currentUserId = GetCurrentUserId();
 			var hotels = new List<HotelDto>();
 			var hotelEntities = await _context.Hotels
 				.Where(h => h.HotelOwnerId == currentUserId)
@@ -65,9 +57,8 @@ namespace TravelMate.Services
 			return hotels;
 		}
 
-		public async Task<HotelDto> Get(int id)
+		public async Task<HotelDto> Get(int id, int currentUserId)
 		{
-			var currentUserId = GetCurrentUserId();
 			var hotelEntity = await _context.Hotels.FindAsync(id);
 
 			if (hotelEntity == null || hotelEntity.HotelOwnerId != currentUserId)
@@ -94,9 +85,8 @@ namespace TravelMate.Services
 			};
 		}
 
-		public async Task Update(HotelDto hotel)
+		public async Task Update(HotelDto hotel, int currentUserId)
 		{
-			var currentUserId = GetCurrentUserId();
 			var existingHotel = await _context.Hotels.FindAsync(hotel.HotelId);
 
 			if (existingHotel == null || existingHotel.HotelOwnerId != currentUserId)
@@ -120,13 +110,12 @@ namespace TravelMate.Services
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task Add(HotelDto hotel)
+		public async Task Add(HotelDto hotel, int currentUserId)
 		{
-			var currentUserId = GetCurrentUserId();
 
 			await _context.Hotels.AddAsync(new Hotel
 			{
-				HotelOwnerId = currentUserId, // Use the current user's ID as the owner
+				HotelOwnerId = currentUserId, // need to add compare
 				Name = hotel.Name,
 				Address = hotel.Address,
 				City = hotel.City,
@@ -144,9 +133,8 @@ namespace TravelMate.Services
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task Delete(int id)
+		public async Task Delete(int id, int currentUserId)
 		{
-			var currentUserId = GetCurrentUserId();
 			var hotel = await _context.Hotels.FindAsync(id);
 
 			if (hotel == null || hotel.HotelOwnerId != currentUserId)

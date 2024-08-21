@@ -5,7 +5,7 @@ namespace TravelMate.Services
 {
 	public interface IAdminService
 	{
-		Task<List<UserDto>> GetALl();
+		Task<List<UserDto>> GetAll();
 		Task Delete(int id);
 	}
 	public class AdminService : IAdminService
@@ -30,7 +30,7 @@ namespace TravelMate.Services
 		}
 		
 
-		public async Task<List<UserDto>> GetALl()
+		public async Task<List<UserDto>> GetAll()
 		{
 			var usersDto = new List<UserDto>();
 			var users = await _context.Users.ToListAsync();

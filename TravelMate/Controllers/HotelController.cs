@@ -18,11 +18,11 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpGet("AllHotels")]
-		public async Task<ActionResult<List<HotelDto>>> GetAll()
+		public async Task<ActionResult<List<HotelDto>>> GetAll(int currentUserId)
 		{
 			try
 			{
-				var hotels = await _service.GetAll();
+				var hotels = await _service.GetAll(currentUserId);
 				return Ok(hotels);
 			}
 			catch (Exception ex)
@@ -32,11 +32,11 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpGet("{id}")]
-		public async Task<ActionResult<HotelDto>> Get(int id)
+		public async Task<ActionResult<HotelDto>> Get(int id, int currentUserId)
 		{
 			try
 			{
-				var hotel = await _service.Get(id);
+				var hotel = await _service.Get(id,currentUserId);
 				return Ok(hotel);
 			}
 			catch (Exception ex)
@@ -46,11 +46,11 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Post([FromBody] HotelDto hotel)
+		public async Task<IActionResult> Post([FromBody] HotelDto hotel, int currentUserId)
 		{
 			try
 			{
-				await _service.Add(hotel);
+				await _service.Add(hotel,currentUserId);
 				return Ok();
 			}
 			catch (Exception ex)
@@ -60,11 +60,11 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Put(int id, [FromBody] HotelDto hotel)
+		public async Task<IActionResult> Put([FromBody] HotelDto hotel, int currentUserId)
 		{
 			try
 			{
-				await _service.Update(hotel);
+				await _service.Update(hotel,currentUserId);
 				return Ok();
 			}
 			catch (Exception ex)
@@ -74,11 +74,11 @@ namespace TravelMate.Controllers
 		}
 
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(int id, int currentUserId)
 		{
 			try
 			{
-				await _service.Delete(id);
+				await _service.Delete(id,currentUserId);
 				return Ok();
 			}
 			catch (Exception ex)

@@ -7,10 +7,10 @@ namespace TravelMate.Services
 {
 	public interface ICabService
 	{
-		Task Add(CabDto cab);
-		Task Delete(int id);
-		Task<CabDto> Get();
-		Task Update(CabDto cab);
+		Task Add(CabDto cab, int currentUserId);
+		Task Delete(int id, int currentUserId);
+		Task<CabDto> Get(int currentUserId);
+		Task Update(CabDto cab, int currentUserId);
 	}
 
 	public class CabService : ICabService
@@ -18,21 +18,13 @@ namespace TravelMate.Services
 		private readonly TravelMateDbContext _context;
 		private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public CabService(TravelMateDbContext context, IHttpContextAccessor httpContextAccessor)
+		public CabService(TravelMateDbContext context)
 		{
 			_context = context;
-			_httpContextAccessor = httpContextAccessor;
 		}
 
-		private int GetCurrentUserId()
+		public async Task<CabDto> Get(int currentUserId)
 		{
-			var userId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-			return int.Parse(userId);
-		}
-
-		public async Task<CabDto> Get()
-		{
-			var currentUserId = GetCurrentUserId();
 			var cabEntity = await _context.Cabs.FirstOrDefaultAsync(c => c.DriverId == currentUserId);
 
 			if (cabEntity == null)
@@ -59,13 +51,12 @@ namespace TravelMate.Services
 			};
 		}
 
-		public async Task Add(CabDto cab)
+		public async Task Add(CabDto cab, int currentUserId)
 		{
-			var currentUserId = GetCurrentUserId();
 
 			var cabEntity = new Cab
 			{
-				DriverId = currentUserId,
+				DriverId = currentUserId,//need to add compare
 				VehicleName = cab.VehicleName,
 				RegistrationNumber = cab.RegistrationNumber,
 				LicenseNumber = cab.LicenseNumber,
@@ -84,9 +75,8 @@ namespace TravelMate.Services
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task Update(CabDto cab)
+		public async Task Update(CabDto cab, int currentUserId)
 		{
-			var currentUserId = GetCurrentUserId();
 			var cabEntity = await _context.Cabs.FindAsync(cab.CabId);
 
 			if (cabEntity == null || cabEntity.DriverId != currentUserId)
@@ -110,9 +100,8 @@ namespace TravelMate.Services
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task Delete(int id)
+		public async Task Delete(int id, int currentUserId)
 		{
-			var currentUserId = GetCurrentUserId();
 			var cabEntity = await _context.Cabs.FindAsync(id);
 
 			if (cabEntity == null || cabEntity.DriverId != currentUserId)

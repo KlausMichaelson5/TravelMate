@@ -1,0 +1,65 @@
+﻿@page "/RegisterAgent"
+@inject NavigationManager NavigationManager
+
+<h3 class="text-center mb-4">Welcome to the Registration Page of Travel Mate</h3>
+<p class="text-center mb-5">Here you can register your hotels and cabs and use these services. Choose your role below to get started.</p>
+
+<div class="container">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-primary rounded">
+                <div class="card-body text-center">
+                    <h5 class="card-title mb-4">Hotels</h5>
+                    <p class="card-text mb-4">Register your hotels if you are a hotel owner. Manage your properties and attract more guests.</p>
+                    <button class="btn btn-primary btn-lg custom-hover-primary" @onclick="NavigateToHotelOwner">
+                        Register as Hotel Owner
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-secondary rounded">
+                <div class="card-body text-center">
+                    <h5 class="card-title mb-4">Cabs</h5>
+                    <p class="card-text mb-4">Register your cabs if you are a cab owner. Connect with customers and expand your service area.</p>
+                    <button class="btn btn-secondary btn-lg custom-hover-secondary" @onclick="NavigateToDriverClient">
+                        Register as Driver Client
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-hover-primary:hover {
+        background-color: #004085;
+        border-color: #003d79;
+    }
+
+    .custom-hover-secondary:hover {
+        background-color: #343a40;
+        border-color: #23272b;
+    }
+
+    .card {
+        transition: transform 0.3s ease;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+</style>
+
+@code {
+    private void NavigateToHotelOwner()
+    {
+        NavigationManager.NavigateTo("/HotelOwner");
+    }
+
+    private void NavigateToDriverClient()
+    {
+        NavigationManager.NavigateTo("/DriverClient");
+    }
+}

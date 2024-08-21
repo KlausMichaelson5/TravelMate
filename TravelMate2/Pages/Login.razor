@@ -1,0 +1,208 @@
+﻿@page "/login"
+@using TravelMate.Models
+@using TravelMate2.Services
+@inject IUserService service
+@inject NavigationManager Navigation
+
+<!-- Include Bootstrap and Font Awesome -->
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            padding-top: 70px;
+            background-color: #f8f9fa;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+            .login-container h2 {
+                margin-bottom: 30px;
+            }
+
+        footer {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 2rem 0;
+        }
+
+            footer a {
+                color: #ffc107;
+            }
+    </style>
+</head>
+
+<!-- Header with Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-plane-departure"></i> Travel Mate
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+       @*  <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/hotels">Explore Hotels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tours">Discover Tours</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/login">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                </li>
+            </ul>
+        </div> *@
+    </div>
+</nav>
+
+<!-- Login Form -->
+<div class="container mt-5">
+    <div class="login-container">
+       
+        <h2 class="text-center"><i class="fas fa-user-lock"></i> Login</h2>
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <InputText id="username" class="form-control" @bind-Value="loginModel.Username" placeholder="Enter your username" />
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" placeholder="Enter your password" />
+            </div>
+
+            <div class="form-check mb-3">
+                <InputCheckbox id="rememberMe" class="form-check-input" @bind-Value="loginModel.RememberMe" />
+                <label for="rememberMe" class="form-check-label">Remember me</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </EditForm>
+        <div class="mt-3 text-center">
+            <p>Don't have an account? <a href="/register">Sign up</a></p>
+            <p><a href="/forgot-password">Forgot your password?</a></p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mt-3">@errorMessage</div>
+        }
+        @if (isSuccess)
+        {
+            <div class="alert alert-success mt-3">User created successfully!</div>
+        }
+
+        @if (errorMessage != null)
+        {
+            <div class="alert alert-danger mt-3">@errorMessage</div>
+        }
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-center text-lg-start mt-5">
+    <div class="container p-4">
+        <div class="row">
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Travel Mate</h5>
+                <p>
+                    Your one-stop solution for all your travel needs. Explore, book, and enjoy your trips with ease.
+                </p>
+            </div>
+
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Quick Links</h5>
+                <ul class="list-unstyled mb-0">
+                    <li>
+                        <a href="/RegisterAgent" class="text-light">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/contact" class="text-light">
+                            <i class="fas fa-envelope"></i> Contact Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/about" class="text-light">
+                            <i class="fas fa-info-circle"></i> About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/terms" class="text-light">
+                            <i class="fas fa-file-alt"></i> Terms of Service
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center p-3 bg-dark">
+        © 2024 Travel Mate. All rights reserved.
+        <a href="/privacy" class="text-warning ms-2">
+            <i class="fas fa-shield-alt"></i> Privacy Policy
+        </a>
+    </div>
+</footer>
+
+<!-- Include Bootstrap JS and Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+    private string? errorMessage;
+    private bool isSuccess = false;
+
+    private async Task HandleLogin()
+    {
+        try
+        {   
+            var user = await Authenticate(loginModel.Username, loginModel.Password);
+            isSuccess = true;
+            errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            isSuccess = false;
+            errorMessage = ex.Message;
+        }
+    }
+
+
+
+    private async Task<User?> Authenticate(string username, string password)
+    {
+
+        var user = await service.Login(username, password);
+        return user;
+
+    }
+
+    private class LoginModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public bool RememberMe { get; set; }
+    }
+}
+

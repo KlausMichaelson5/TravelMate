@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TravelMate", "TravelMate\TravelMate.csproj", "{5870E142-FBE7-4E78-9EE1-3BD953984CF6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TravelMate2", "TravelMate2\TravelMate2.csproj", "{B05950A1-5BB3-4408-BAB1-566ABB1CE810}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5870E142-FBE7-4E78-9EE1-3BD953984CF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5870E142-FBE7-4E78-9EE1-3BD953984CF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5870E142-FBE7-4E78-9EE1-3BD953984CF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B05950A1-5BB3-4408-BAB1-566ABB1CE810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B05950A1-5BB3-4408-BAB1-566ABB1CE810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B05950A1-5BB3-4408-BAB1-566ABB1CE810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B05950A1-5BB3-4408-BAB1-566ABB1CE810}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

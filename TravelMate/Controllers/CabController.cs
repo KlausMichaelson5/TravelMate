@@ -34,7 +34,7 @@ namespace TravelMate.Controllers
 			}
 		}
 
-		[HttpPost]
+		[HttpPost("addcab")]
 		public async Task<IActionResult> Post([FromBody] CabDto cab, int currentUserId)
 		{
 			try

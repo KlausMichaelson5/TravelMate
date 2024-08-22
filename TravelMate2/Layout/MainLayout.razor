@@ -1,17 +1,91 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+
 <div class="page">
-   @*  <div class="sidebar"> 
-        <NavMenu />
-   </div>  *@
+	@*  <div class="sidebar">
+	<NavMenu />
+	</div>  *@
 
-    <main>
-       @* <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>  *@
+	<main>
+		<div class="top-row px-6">
+			<div class="header bg-dark py-3 shadow-sm">
+				<div class="d-flex justify-content-between align-items-center">
+					<!-- Logo -->
+					<div>
+						<a href="/"><img src="logo.png" alt="Travel Mate" class="img-fluid" style="max-height: 50px;" /></a>
+					</div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
- </div>
+					<!-- Navigation Menu -->
+					<nav class="nav">
+						<a class="nav-link" href="/home">Home</a>
+						<a class="nav-link" href="#">Hotels</a>
+						<a class="nav-link" href="#">Cabs</a>
+						<a class="nav-link" href="#">Deals</a>
+						<a class="nav-link" href="#">My Bookings</a>
+					</nav>
+					<!-- User Profile / Account Section -->
+					<div class="d-flex align-items-center">
+						<a href="/login" @onclick="@(()=>Login())" class="btn btn-outline-primary mr-2">Login</a>
+						<a href="/Register" @onclick="@(()=>Register())" class="btn btn-primary">Create Account</a>
+						<div class="dropdown ml-3">
+							<button class="btn btn-secondary dropdown-toggle" type="button" id="languageCurrencyDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								IN | ENG | INR
+							</button>
+							<div class="dropdown-menu" aria-labelledby="languageCurrencyDropdown">
+								<a class="dropdown-item" href="#">Change Language</a>
+								<a class="dropdown-item" href="#">Change Currency</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
+		<article class="content px-4">
+			@Body
+		</article>
+	</main>
+</div>
+<footer class="footer mt-auto py-3 bg-dark text-white">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4 text-center text-md-left">
+				<h5>Travel Mate</h5>
+				<p>Your reliable partner for all your travel needs.</p>
+			</div>
+			<div class="col-md-4 text-center">
+				<h5>Quick Links</h5>
+				<ul class="list-unstyled">
+					<li><a href="#" class="text-white">About Us</a></li>
+					<li><a href="#" class="text-white">Contact Us</a></li>
+					<li><a href="#" class="text-white">Privacy Policy</a></li>
+					<li><a href="#" class="text-white">Terms of Service</a></li>
+				</ul>
+			</div>
+			<div class="col-md-4 text-center text-md-right">
+				<h5>Follow Us</h5>
+				<ul><a href="#" class="text-white"><i class="fab fa-facebook-f "></i>Facebook</a></ul>
+				<ul><a href="#" class="text-white"><i class="fab fa-twitter "></i>Twitter</a></ul>
+				<ul><a href="#" class="text-white"><i class="fab fa-instagram "></i>Instagram</a></ul>
+				<ul><a href="#" class="text-white"><i class="fab fa-linkedin-in "></i>Linkedin</a></ul>
+			</div>
+		</div>
+		<div class="row mt-3">
+			<div class="col-12 text-center">
+				<span>© 2024 Travel Mate - All Rights Reserved</span>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+@code {
+	private void Register()
+	{
+		NavigationManager.NavigateTo("/Register");
+	}
+	private void Login()
+	{
+		NavigationManager.NavigateTo("/login");
+	}
+}

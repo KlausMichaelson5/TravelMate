@@ -19,13 +19,13 @@ namespace TravelMate2.Services
         }
         public async Task Add(User user)
         {
-             await httpClient.PostAsJsonAsync<User>("",user);
+             await httpClient.PostAsJsonAsync<User>("users/", user);
             
         }
 
         public async Task<User> Login(string username,string password)
         {
-            var response = await httpClient.GetAsync($"?username={username}&password={password}");
+            var response = await httpClient.GetAsync($"users/?username={username}&password={password}");
             if(response.IsSuccessStatusCode)
             {
                 var authenticatedUser=await response.Content.ReadFromJsonAsync<User>();

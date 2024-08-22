@@ -1,51 +1,44 @@
-﻿using System.Collections.Generic;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Threading.Tasks;
 using TravelMate.Models;
 
 namespace TravelMate2.Services
 {
-    public interface ICabService
-    {
-        Task<List<Cab>> GetAllCabs();
-        Task<Cab> GetCab(int cabId);
-        Task AddCab(Cab cab);
-        Task UpdateCab(Cab cab);
-        Task DeleteCab(int cabId);
-    }
+	public interface ICabService
+	{
+		Task AddCab(Cab cab, int userId);
+		Task DeleteCab(int cabId, int userId);
+		Task<Cab> GetCab(int cabId, int userId);
+		Task UpdateCab(Cab cab, int userId);
+	}
 
-    public class CabService : ICabService
-    {
-        private readonly HttpClient httpClient;
+	public class CabService : ICabService
+	{
+		private readonly HttpClient httpClient;
 
-        public CabService(HttpClient client)
-        {
-            this.httpClient = client;
-        }
+		public CabService(HttpClient client)
+		{
+			this.httpClient = client;
+		}
 
-        public async Task<List<Cab>> GetAllCabs()
-        {
-            return await httpClient.GetFromJsonAsync<List<Cab>>("cabs");
-        }
+		public async Task<Cab> GetCab(int cabId, int userId)
+		{
+			return await httpClient.GetFromJsonAsync<Cab>($"cabs/{cabId}?currentUserId={userId}");
+		}
 
-        public async Task<Cab> GetCab(int cabId)
-        {
-            return await httpClient.GetFromJsonAsync<Cab>($"cabs/{cabId}");
-        }
+		public async Task AddCab(Cab cab, int userId)
+		{
+			await httpClient.PostAsJsonAsync($"cabs/addcab?currentUserId={userId}", cab);
+		}
 
-        public async Task AddCab(Cab cab)
-        {
-            await httpClient.PostAsJsonAsync("addcab", cab);
-        }
+		public async Task UpdateCab(Cab cab, int userId)
+		{
+			await httpClient.PutAsJsonAsync($"cabs/?currentUserId={userId}", cab);
+		}
 
-        public async Task UpdateCab(Cab cab)
-        {
-            await httpClient.PutAsJsonAsync($"cabs/{cab.CabId}", cab);
-        }
-
-        public async Task DeleteCab(int cabId)
-        {
-            await httpClient.DeleteAsync($"cabs/{cabId}");
-        }
-    }
+		public async Task DeleteCab(int cabId, int userId)
+		{
+			await httpClient.DeleteAsync($"api/cabs/{cabId}?currentUserId={userId}");
+		}
+	}
 }

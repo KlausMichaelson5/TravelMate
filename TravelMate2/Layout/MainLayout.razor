@@ -1,6 +1,32 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 
+<style>
+	.header {
+		background: rgba(0, 0, 0, 0.7);
+		padding: 20px;
+		border-bottom: 1px solid #444;
+		z-index: 1000;
+	}
+
+	.navbar-brand {
+		font-weight: bold;
+		color: dodgerblue;
+		font-size: 2rem;
+	}
+
+		.navbar-brand i {
+			margin-right: 10px;
+		}
+
+	.nav-link {
+		color: #fff;
+		margin-right: 20px;
+		font-weight: 500;
+		transition: color 0.3s;
+	}
+</style>
+
 <div class="page">
 	@*  <div class="sidebar">
 	<NavMenu />
@@ -11,18 +37,34 @@
 			<div class="header bg-dark py-3 shadow-sm">
 				<div class="d-flex justify-content-between align-items-center">
 					<!-- Logo -->
-					<div>
-						<a href="/"><img src="logo.png" alt="Travel Mate" class="img-fluid" style="max-height: 50px;" /></a>
-					</div>
+					<a class="navbar-brand" href="/">
+						<i class="fas fa-hotel"></i> Travel Mate
+					</a>
 
 					<!-- Navigation Menu -->
 					<nav class="nav">
-						<a class="nav-link" href="/home">Home</a>
-						<a class="nav-link" href="#">Hotels</a>
-						<a class="nav-link" href="#">Cabs</a>
-						<a class="nav-link" href="#">Deals</a>
-						<a class="nav-link" href="#">My Bookings</a>
+
+						<a class="nav-link" href="/">
+							<i class="fas fa-home"></i> Home
+						</a>
+
+
+						<a class="nav-link" href="#">
+							<i class="fas fa-hotel"></i> Hotels
+						</a>
+
+						<a class="nav-link" href="#">
+							<i class="fas fa-car"></i> Cabs
+						</a>
+						<a class="nav-link" href="#">
+							<i class="fas fa-tag"></i> Deals
+						</a>
+						<a class="nav-link" href="#">
+							<i class="fas fa-book"></i> My Bookings
+						</a>
+
 					</nav>
+				
 					<!-- User Profile / Account Section -->
 					<div class="d-flex align-items-center">
 						<a href="/login" @onclick="@(()=>Login())" class="btn btn-outline-primary mr-2">Login</a>
@@ -44,6 +86,7 @@
 		<article class="content px-4">
 			@Body
 		</article>
+
 	</main>
 </div>
 <footer class="footer mt-auto py-3 bg-dark text-white">

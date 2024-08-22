@@ -3,55 +3,55 @@ using TravelMate.Models;
 
 namespace TravelMate2.Services
 {
-    public interface IHotelService
-    {
-        Task Add(Hotel hotel);
-        Task<Hotel> Get(int id);
-        Task Update(Hotel hotel);
-        Task Delete(int id);
-        Task<List<Hotel>> GetAll();
-    }
+	public interface IHotelService
+	{
+		Task Add(Hotel hotel, int currentUserId);
+		Task<Hotel> Get(int id, int currentUserId);
+		Task Update(Hotel hotel, int currentUserId);
+		Task Delete(int id, int currentUserId);
+		Task<List<Hotel>> GetAll(int currentUserId);
+	}
 
-    public class HotelService : IHotelService
-    {
-        private readonly HttpClient _httpClient;
+	public class HotelService : IHotelService
+	{
+		private readonly HttpClient _httpClient;
 
-        public HotelService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
+		public HotelService(HttpClient httpClient)
+		{
+			_httpClient = httpClient;
+		}
 
-        public async Task Add(Hotel hotel)
-        {
-            await _httpClient.PostAsJsonAsync("hotels", hotel);
-        }
+		public async Task Add(Hotel hotel, int currentUserId)
+		{
+			await _httpClient.PostAsJsonAsync($"hotels?currentUserId={currentUserId}", hotel);
+		}
 
-        public async Task<Hotel> Get(int id)
-        {
-            var response = await _httpClient.GetAsync($"hotels/{id}");
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<Hotel>();
-            }
-            else
-            {
-                throw new Exception("Hotel not found");
-            }
-        }
+		public async Task<Hotel> Get(int id, int currentUserId)
+		{
+			var response = await _httpClient.GetAsync($"hotels/{id}?currentUserId={currentUserId}");
+			if (response.IsSuccessStatusCode)
+			{
+				return await response.Content.ReadFromJsonAsync<Hotel>();
+			}
+			else
+			{
+				throw new Exception("Hotel not found");
+			}
+		}
 
-        public async Task Update(Hotel hotel)
-        {
-            await _httpClient.PutAsJsonAsync($"hotels/{hotel.HotelOwnerId}", hotel);
-        }
+		public async Task Update(Hotel hotel, int currentUserId)
+		{
+			await _httpClient.PutAsJsonAsync($"hotels/{hotel.HotelOwnerId}?currentUserId={currentUserId}", hotel);
+		}
 
-        public async Task Delete(int id)
-        {
-            await _httpClient.DeleteAsync($"hotels/{id}");
-        }
+		public async Task Delete(int id, int currentUserId)
+		{
+			await _httpClient.DeleteAsync($"hotels/{id}?currentUserId={currentUserId}");
+		}
 
-        public async Task<List<Hotel>> GetAll()
-        {
-            return await _httpClient.GetFromJsonAsync<List<Hotel>>("hotels/AllHotels");
-        }
-    }
+		public async Task<List<Hotel>> GetAll(int currentUserId)
+		{
+			return await _httpClient.GetFromJsonAsync<List<Hotel>>($"hotels/AllHotels?currentUserId={currentUserId}");
+		}
+	}
 }

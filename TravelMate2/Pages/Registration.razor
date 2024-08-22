@@ -1,4 +1,5 @@
-﻿@page "/HotelOwner"
+﻿@page "/Registration"
+@page "/Registration/{userType:int}"
 @using TravelMate.Models
 @using TravelMate2.Services
 @inject IUserService service
@@ -73,11 +74,10 @@
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-globe fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
-                                            <label for="usertype"><i class="fas fa-user-tag"></i> User Type:</label>
-                                            <InputSelect id="usertype" class="form-control" @bind-Value="user.UserType" disabled>
-                                                <option value="@UserType.hotel_owner">@UserType.hotel_owner</option>
+                                            <label for="susertype"><i class="fas fa-user-tag"></i> User Type:</label>
+                                            <InputSelect id="susertype" class="form-control" @bind-Value="user.UserType" >
+                                                <option value="@SelectedUserType">@SelectedUserType</option>
                                             </InputSelect>
-                                            <small class="form-text text-muted">User type is automatically set to hotel owner.</small>
                                         </div>
                                     </div>
 
@@ -93,20 +93,6 @@
                                             Register
                                         </button>
                                     </div>
-
-                                    @if (isSuccess)
-                                    {
-                                        <div class="alert alert-success mt-4">
-                                            <i class="fas fa-check-circle"></i> User created successfully!
-                                        </div>
-                                    }
-
-                                    @if (!string.IsNullOrEmpty(errorMessage))
-                                    {
-                                        <div class="alert alert-danger mt-4">
-                                            <i class="fas fa-exclamation-circle"></i> @errorMessage
-                                        </div>
-                                    }
                                 </EditForm>
 
                             </div>
@@ -122,10 +108,30 @@
 </section>
 
 @code {
-    private User user = new User { UserType = UserType.hotel_owner }; // Ensure UserType enum value is correct
+    [Parameter]
+    public int userType { get; set; }
+    private UserType SelectedUserType{ get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        switch (userType)
+        {
+            case 1:
+                SelectedUserType = UserType.Regular;
+                break;
+            case 2:
+                SelectedUserType = UserType.hotel_owner;
+                break;
+            case 3:
+                SelectedUserType = UserType.driver_client;
+                break;
+            default:
+                SelectedUserType = UserType.Regular;
+                break;
+
+        }
+    }
+    private User user = new User {}; 
     private bool rememberPassword = false;
-    private bool isSuccess = false;
-    private string? errorMessage;
 
     private string passwordInputType = "password";
 
@@ -135,13 +141,11 @@
         {
             user.AuthProvider = AuthProvider.Local;
             await service.Add(user);
-            isSuccess = true;
-            errorMessage = null;
+            NavigationManager.NavigateTo("/");
         }
         catch (Exception ex)
         {
-            isSuccess = false;
-            errorMessage = ex.Message;
+            throw new Exception("Error in registration.");
         }
     }
 }

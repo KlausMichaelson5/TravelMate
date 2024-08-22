@@ -68,7 +68,7 @@
 					<!-- User Profile / Account Section -->
 					<div class="d-flex align-items-center">
 						<a href="/login" @onclick="@(()=>Login())" class="btn btn-outline-primary mr-2">Login</a>
-						<a href="/Register" @onclick="@(()=>Register())" class="btn btn-primary">Create Account</a>
+						<a href="/Registration/1" class="btn btn-primary">Create Account</a>
 						<div class="dropdown ml-3">
 							<button class="btn btn-secondary dropdown-toggle" type="button" id="languageCurrencyDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								IN | ENG | INR
@@ -99,10 +99,10 @@
 			<div class="col-md-4 text-center">
 				<h5>Quick Links</h5>
 				<ul class="list-unstyled">
-					<li><a href="#" class="text-white">About Us</a></li>
-					<li><a href="#" class="text-white">Contact Us</a></li>
-					<li><a href="#" class="text-white">Privacy Policy</a></li>
-					<li><a href="#" class="text-white">Terms of Service</a></li>
+					<li><a href="/aboutus" class="text-white">About Us</a></li>
+					<li><a href="/ContactUs" class="text-white">Contact Us</a></li>
+					<li><a href="/privacy-policy" class="text-white">Privacy Policy</a></li>
+					<li><a href="/tas" class="text-white">Terms of Service</a></li>
 				</ul>
 			</div>
 			<div class="col-md-4 text-center text-md-right">
@@ -123,10 +123,7 @@
 
 
 @code {
-	private void Register()
-	{
-		NavigationManager.NavigateTo("/Register");
-	}
+
 	private void Login()
 	{
 		NavigationManager.NavigateTo("/login");
